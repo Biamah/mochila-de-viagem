@@ -1,28 +1,52 @@
 const form = document.getElementById('novoItem');
 const lista = document.getElementById('lista');
 
+// lista de itens inicial
+const itens = JSON.parse(localStorage.getItem('itens')) || [];
+itens.forEach((elemento) => {
+    criaElemento(elemento);
+});
+
 form.addEventListener('submit', (e) => {
     e.preventDefault();
 
-    const nome = e.target.elements['nome'].value;
-    const quantidade = e.target.elements['quantidade'].value;
+    // pega nome e quantidade cadastrados no form
+    const nome = e.target.elements['nome'];
+    const quantidade = e.target.elements['quantidade'];
 
-    criaElemento(nome, quantidade);
+    // objeto item atual
+    const itemAtual = {
+        'nome': nome.value,
+        'quantidade': quantidade.value,
+    }
+
+    // cria elemento li na lista
+    criaElemento(itemAtual);
+
+    // adiciona item na lista
+    itens.push(itemAtual);
+
+    // salva no localStorage
+    localStorage.setItem('itens', JSON.stringify(itens));
+
+    nome.value = '';
+    quantidade.value = '';
 });
 
-function criaElemento (nome, quantidade) {
+function criaElemento (item) {
     // cria novo li e add classe
     const novoItem = document.createElement('li');
-    novoItem.classList.add('item');
+    novoItem.classList.add("item");
 
     // cria elemento strong e atribui a ele a quantidade digitado pelo usuário
     const numeroItem = document.createElement('strong');
-    numeroItem.innerHTML = quantidade;
+    numeroItem.innerHTML = item.quantidade;
     
     // cria novo item da lista com informações completas
     novoItem.appendChild(numeroItem);
-    novoItem.innerHTML += nome;
+    novoItem.innerHTML += item.nome;
 
     // adiciona novo item a lista 
     lista.appendChild(novoItem);
+
 }
