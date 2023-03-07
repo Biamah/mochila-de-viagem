@@ -27,10 +27,11 @@ form.addEventListener('submit', (e) => {
 
         atualizaElemento(itemAtual);
 
-        // atualiza elemento no localstorage
-        itens[existe.id] = itemAtual;
+        // busca elemento correto e atualiza elemento no localstorage
+        itens[intens.findIndex(elemento => elemento.id === existe.id)] = itemAtual;
     } else {
-        itemAtual.id = itens.length;
+        // verifica o index correto de cada elemento
+        itemAtual.id = itens[itens.length - 1] ? (itens[itens.length - 1]).id + 1 : 0;
 
         // cria elemento li na lista
         criaElemento(itemAtual);
@@ -60,6 +61,9 @@ function criaElemento (item) {
     novoItem.appendChild(numeroItem);
     novoItem.innerHTML += item.nome;
 
+    // adiciona botão deletar
+    novoItem.appendChild(botaoDeleta(item.id));
+
     // adiciona novo item a lista 
     lista.appendChild(novoItem);
 
@@ -68,4 +72,25 @@ function criaElemento (item) {
 function atualizaElemento (item) {
     // atualiza a quantidade dos itens de acordo com a última quantidade digitada
     document.querySelector("[data-id='"+item.id+"']").innerHTML = item.quantidade;
+}
+
+function botaoDeleta (id) {
+    const elementoBotao = document.createElement('button');
+    elementoBotao.innerText = 'X';
+
+    elementoBotao.addEventListener('click', function () {
+        deletaElemento(this.parentNode, id);
+    });
+
+    return elementoBotao;
+}
+
+function deletaElemento (tag, id) {
+    tag.remove();
+
+    // remover um item do array
+    itens.splice(itens.findIndex(elemento => elemento.id === id), 1);
+
+    // reescrever do localstorage
+    localStorage.setItem('itens', JSON.stringify(itens));
 }
